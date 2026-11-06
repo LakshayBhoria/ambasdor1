@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: thinkorix-ambassador-api
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: node src/index.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_DRIVER
+        value: firestore
+      - key: JWT_SECRET
+        generateValue: true
+      - key: INTEGRATION_SECRET
+        generateValue: true
+      - key: APP_URL            # your Vercel URL, e.g. https://thinkorix-ambassador.vercel.app
+        sync: false
+      - key: REGISTER_URL
+        sync: false
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: SEND_EMAIL
+        value: "false"
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
