@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track my referrals — ThinKorix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="auth-shell">
+  <div class="auth-card" style="max-width:640px">
+    <a href="index.html" class="brand"><img src="logo.jpeg" alt="ThinKorix" style="width:30px;height:30px;border-radius:8px;">ThinKorix Ambassadors</a>
+    <p class="sub">Track your referrals</p>
+    <div class="alert alert-error" id="alert-err"></div>
+    <form id="track-form">
+      <div class="field"><label for="tk-code">Referral code</label><input id="tk-code" required placeholder="TKX-ABC123" autocomplete="off" style="text-transform:uppercase"></div>
+      <div class="field"><label for="tk-email">Email you applied with</label><input type="email" id="tk-email" required autocomplete="email" placeholder="you@example.com"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="tk-submit">Show my referrals</button>
+    </form>
+    <div id="result" style="display:none;margin-top:22px"></div>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/track.js"></script>
+</body>
+</html>

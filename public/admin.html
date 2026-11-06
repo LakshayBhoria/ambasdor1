@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="logo.jpeg"><meta name="robots" content="noindex"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/app.css"><title>Admin — ThinKorix Ambassadors</title></head><body>
+<div id="appbar" class="appbar"></div><div id="toast"></div>
+<main class="wrap page"><div class="page-head"><h1>Ambassador program</h1><p>Referrals, reward claims, payouts, gallery and settings.</p></div>
+<div class="grid grid-4" id="ov"></div>
+<div class="tabs sp" role="tablist"><div class="tab active" data-t="amb">Ambassadors</div><div class="tab" data-t="ref">Referrals</div><div class="tab" data-t="clm">Reward claims <span class="tag tag-amber" id="clmN" style="display:none;margin-left:6px"></span></div><div class="tab" data-t="pay">Payouts</div><div class="tab" data-t="gal">Gallery</div><div class="tab" data-t="set">Settings</div></div>
+
+<div class="tab-panel active" id="amb"><div style="text-align:right;margin-bottom:10px"><button class="btn btn-ghost btn-sm" data-act="csv">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Code</th><th>College</th><th>Paid</th><th>Pending</th><th>Earned</th><th>Balance</th></tr></thead><tbody id="at"></tbody></table></div></div>
+
+<div class="tab-panel" id="ref"><div class="card"><b>Add referral manually</b><div class="field-row sp"><input id="rc" placeholder="Referral code" aria-label="Referral code"><input id="rn" placeholder="Student name" aria-label="Student name"><input id="re" placeholder="Student email" aria-label="Student email"><button class="btn btn-primary btn-sm" data-act="addref">Add</button></div></div>
+<div class="table-wrap sp"><table><thead><tr><th>Student</th><th>Ambassador</th><th>Code</th><th>Status</th><th></th></tr></thead><tbody id="rt"></tbody></table></div></div>
+
+<div class="tab-panel" id="clm"><div class="table-wrap"><table><thead><tr><th>Ambassador</th><th>Reward</th><th>Delivery details</th><th>Status</th><th>Note to ambassador</th><th></th></tr></thead><tbody id="ct"></tbody></table></div></div>
+
+<div class="tab-panel" id="pay"><div class="card" style="max-width:640px"><b>Record a payout</b><div class="field-row sp"><select id="pa" aria-label="Ambassador"></select><input id="pm" type="number" min="1" placeholder="Amount ₹" aria-label="Amount"><input id="pn" placeholder="Note (UPI ref)" aria-label="Note"><button class="btn btn-primary btn-sm" data-act="addpay">Save</button></div><p class="mut sp">Balance = commission earned − payouts recorded.</p></div></div>
+
+<div class="tab-panel" id="gal"><div class="card"><b>Add a photo</b><p class="mut" style="margin:4px 0 14px">Paste a public image link (https). Host photos on Google Drive, Cloudinary, Imgur or your own site.</p>
+<div class="field-row"><div class="field"><label for="gt">Title</label><input id="gt" maxlength="80"></div><div class="field"><label for="gc">Category</label><select id="gcat"></select></div></div>
+<div class="field"><label for="gu">Image link</label><input id="gu" placeholder="https://"></div><div class="field"><label for="gcap">Caption (optional)</label><input id="gcap" maxlength="200"></div>
+<label class="chk"><input type="checkbox" id="gf"> Feature on the home page</label><button class="btn btn-primary btn-sm sp" data-act="addgal">Add to gallery</button></div>
+<div class="gal-adm" id="gadm"></div></div>
+
+<div class="tab-panel" id="set"><div class="card" style="max-width:420px;margin-bottom:22px"><div class="field"><label for="sc">Commission (slab rates are set in src/config.js)</label><input id="sc" type="number" min="0" disabled></div><p class="mut">Slabs: paid referrals 1-10 earn ₹100 each, 11-20 earn ₹136 each, 21-50 earn ₹200 each. A rate is fixed when a referral turns paid.</p></div>
+<h3 style="margin-bottom:10px">Reward tiers</h3><p class="mut" style="margin-bottom:14px">One reward per line. Use {stipend} to insert the stipend text. If you set a cash amount, items starting with "Cash bonus" or "Cash reward" show it.</p>
+<div id="tiered"></div><div class="row-actions"><button class="btn btn-ghost btn-sm" data-act="addtier">Add a tier</button><button class="btn btn-primary" data-act="savesettings">Save settings</button></div></div>
+</main>
+<script src="js/api.js"></script><script src="js/site.js"></script><script src="js/admin.js"></script></body></html>
