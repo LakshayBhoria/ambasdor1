@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/app.css"><title>Admin — ThinKorix Ambassadors</title></head><body>
+<div id="appbar" class="appbar"></div><div id="toast"></div>
+<main class="wrap page"><div class="page-head"><div><div class="eyebrow">Admin</div><h1>Ambassador program</h1><p>Referrals, payouts and settings in one place.</p></div></div>
+<div class="grid grid-4" id="ov"></div>
+<div class="tabs sp"><div class="tab active" data-t="amb">Ambassadors</div><div class="tab" data-t="ref">Referrals</div><div class="tab" data-t="pay">Payouts</div><div class="tab" data-t="set">Settings</div></div>
+<div class="tab-panel active" id="amb"><div style="text-align:right;margin-bottom:10px"><button class="btn btn-ghost btn-sm" onclick="csv()">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Code</th><th>College</th><th>Paid / target</th><th>Pending</th><th>Earned</th><th>Balance</th></tr></thead><tbody id="at"></tbody></table></div></div>
+<div class="tab-panel" id="ref"><div class="card"><b>Add referral manually</b><div class="field-row sp"><input id="rc" placeholder="Referral code"><input id="rn" placeholder="Student name"><input id="re" placeholder="Student email"><button class="btn btn-primary btn-sm" onclick="addRef()">Add</button></div></div>
+<div class="table-wrap sp"><table><thead><tr><th>Student</th><th>Ambassador</th><th>Code</th><th>Status</th><th></th></tr></thead><tbody id="rt"></tbody></table></div></div>
+<div class="tab-panel" id="pay"><div class="card"><b>Record a payout</b><div class="field-row sp"><select id="pa"></select><input id="pm" type="number" placeholder="Amount ₹"><input id="pn" placeholder="Note (UPI ref…)"><button class="btn btn-primary btn-sm" onclick="addPay()">Save</button></div><p class="mut sp">Balance = commission earned − payouts recorded.</p></div></div>
+<div class="tab-panel" id="set"><div class="card" style="max-width:420px"><div class="field"><label>Commission per paid referral (₹)</label><input id="sc" type="number"></div><div class="field"><label>Target paid referrals for rewards</label><input id="st" type="number"></div><button class="btn btn-primary" onclick="saveSet()">Save</button><p class="mut sp">A new rate applies only to referrals that become paid after the change.</p></div></div>
+</main>
+<script src="js/api.js"></script>
+<script>
+const $=id=>document.getElementById(id),E=TKA.escapeHtml,R=n=>'₹'+Number(n||0).toLocaleString('en-IN');let AMB=[];
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab,.tab-panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$(t.dataset.t).classList.add('active')});
+async function call(p,m,b){try{return await TKA.api('/api/admin'+p,{method:m||'GET',body:b})}catch(e){TKA.toast(e.message,true);throw e}}
+if(TKA.requireLogin({roles:['admin']})){TKA.renderAppbar({title:'Admin'});load()}
+async function load(){const[o,a,r]=await Promise.all([call('/overview'),call('/ambassadors'),call('/referrals')]);AMB=a.ambassadors;
+$('ov').innerHTML=[['ambassadors','Ambassadors'],['paid','Paid referrals'],['pending','Pending'],['owed','Commission owed']].map(([k,l])=>'<div class="stat-card"><div class="num">'+(k==='owed'?R(o[k]):o[k])+'</div><div class="lbl">'+l+'</div></div>').join('');
+$('sc').value=o.settings.commissionPerReferral;$('st').value=o.settings.targetReferrals;
+$('at').innerHTML=AMB.map(x=>'<tr><td>'+E(x.name)+'<div class="mut">'+E(x.email)+(x.referredBy?' · referred by '+E(x.referredBy):'')+'</div></td><td><code>'+x.refCode+'</code></td><td>'+E(x.college)+'</td><td>'+x.paid+'/'+x.target+'</td><td>'+x.pending+'</td><td>'+R(x.commissionEarned)+'</td><td>'+R(x.balance)+'</td></tr>').join('')||'<tr><td colspan="7" class="mut">No ambassadors yet.</td></tr>';
+$('pa').innerHTML=AMB.map(x=>'<option value="'+x.id+'">'+E(x.name)+' — balance '+R(x.balance)+'</option>').join('');
+$('rt').innerHTML=r.referrals.map(x=>'<tr><td>'+E(x.studentName)+'<div class="mut">'+E(x.studentEmail)+'</div></td><td>'+E(x.ambassador||'?')+'</td><td><code>'+x.refCode+'</code></td><td><span class="tag '+(x.status==='paid'?'tag-green':'tag-amber')+'">'+x.status+'</span></td><td><button class="btn btn-ghost btn-sm" onclick="setS(\''+x.id+'\',\''+(x.status==='paid'?'pending':'paid')+'\')">Mark '+(x.status==='paid'?'pending':'paid')+'</button></td></tr>').join('')||'<tr><td colspan="5" class="mut">No referrals yet.</td></tr>'}
+async function setS(id,s){await call('/referrals/'+id,'PATCH',{status:s});TKA.toast('Updated');load()}
+async function addRef(){await call('/referrals','POST',{refCode:$('rc').value,studentName:$('rn').value,studentEmail:$('re').value});TKA.toast('Added');load()}
+async function addPay(){await call('/payouts','POST',{ambassadorId:$('pa').value,amount:$('pm').value,note:$('pn').value});TKA.toast('Payout saved');load()}
+async function saveSet(){await call('/settings','PATCH',{commissionPerReferral:$('sc').value,targetReferrals:$('st').value});TKA.toast('Saved');load()}
+function csv(){const rows=[['Name','Email','Phone','College','Code','Paid','Pending','Earned','PaidOut','Balance']].concat(AMB.map(x=>[x.name,x.email,x.phone,x.college,x.refCode,x.paid,x.pending,x.commissionEarned,x.paidOut,x.balance]));
+const b=new Blob([rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ambassadors.csv';a.click()}
+</script></body></html>

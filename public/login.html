@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="logo.jpeg"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/app.css"><title>Log in — ThinKorix Ambassadors</title></head><body>
+<div class="login-split">
+<aside class="login-brand"><a href="index.html" class="brand"><img src="logo.jpeg" alt="ThinKorix">ThinKorix <small style="color:#A9AEB7">Ambassadors</small></a>
+<div><h2>Your referrals and earnings, always up to date.</h2><ul><li>Personal referral code and share link</li><li>Live count of paid and pending referrals</li><li>Commission and payouts in one place</li></ul></div>
+<span class="mut" style="color:#A9AEB7">ThinKorix Ambassador Program</span></aside>
+<main class="login-form"><div class="box">
+<h1 id="ttl">Welcome back</h1><p class="mut" id="sbt" style="margin-bottom:22px">Log in to see your referrals and commission.</p>
+<div class="auth-tabs"><div class="auth-tab active" data-m="login">Log in</div><div class="auth-tab" data-m="signup">Apply</div></div>
+<div class="alert alert-error" id="err" role="alert"></div>
+<form id="login"><div class="field"><label for="le">Email</label><input type="email" id="le" autocomplete="email" required></div><div class="field"><label for="lp">Password</label><input type="password" id="lp" autocomplete="current-password" required></div>
+<div style="text-align:right;margin:-8px 0 18px"><a href="forgot-password.html" class="mut" style="text-decoration:underline">Forgot password?</a></div><button class="btn btn-primary btn-block">Log in</button></form>
+<div id="signup" style="display:none"><p class="mut" style="margin-bottom:16px">Ambassadors join through our application form. After you submit it, your appointment letter, referral code and portal login are emailed to you.</p><a class="btn btn-primary btn-block" href="https://docs.google.com/forms/d/e/1FAIpQLScTRbUOw4FHh3KwtpyeXcAsyXCVqWudVkkVqPsYQIP2fzAdnA/viewform" target="_blank" rel="noopener">Open the application form</a><p class="hint mut" style="margin-top:14px">Please follow ThinKorix on Instagram and LinkedIn first. It is required.</p></div>
+</div></main></div>
+<script src="js/api.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function mode(m){document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.m===m));$('login').style.display=m==='login'?'':'none';$('signup').style.display=m==='signup'?'':'none';$('err').classList.remove('show');
+$('ttl').textContent=m==='login'?'Welcome back':'Apply to become an ambassador';$('sbt').textContent=m==='login'?'Log in to see your referrals and commission.':'Apply once, then log in here with the details we email you.'}
+document.querySelectorAll('.auth-tab').forEach(t=>t.onclick=()=>mode(t.dataset.m));
+if(new URLSearchParams(location.search).get('mode')==='signup')mode('signup');
+function done(d){TKA.setSession(d.user,d.token);location.href=d.user.role==='admin'?'admin.html':'dashboard.html'}
+async function go(path,body,btn){btn.disabled=true;try{done(await TKA.api(path,{method:'POST',body,auth:false}))}catch(e){$('err').textContent=e.message;$('err').classList.add('show');btn.disabled=false}}
+$('login').onsubmit=e=>{e.preventDefault();go('/api/auth/login',{email:$('le').value,password:$('lp').value},e.submitter)};
+if(TKA.isLoggedIn())done({user:TKA.getUser(),token:TKA.getToken()});
+</script></body></html>
