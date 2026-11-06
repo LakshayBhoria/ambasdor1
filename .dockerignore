@@ -1,0 +1,7 @@
+node_modules
+.env
+.git
+storage/offers/*
+storage/certificates/*
+!storage/offers/.gitkeep
+!storage/certificates/.gitkeep
